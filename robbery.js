@@ -422,12 +422,21 @@ function createTemplate(template, timePeriodsOfDay, duration, dayOfWeek) {
         if (timePeriodsOfDay[j].to - timePeriodsOfDay[j].from >= duration) {
             template = template.replace('%DD', DAYS_OF_WEEK[dayOfWeek]);
             template = template.replace('%HH',
-                Math.floor(timePeriodsOfDay[j].from / 60));
-            template = template.replace('%MM', timePeriodsOfDay[j].from % 60);
+                reportNumberToString(Math.floor(timePeriodsOfDay[j].from / 60)));
+            template = template.replace('%MM',
+                reportNumberToString(timePeriodsOfDay[j].from % 60));
 
             return template;
         }
     }
 
     return template;
+}
+
+function reportNumberToString(number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+
+    return number;
 }
