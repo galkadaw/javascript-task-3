@@ -53,7 +53,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return false;
             }
-            if(!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
+            if (!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
                 return false;
             }
             for (var i = 0; i < timePeriodsOfDays.length; i++) {
@@ -76,7 +76,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return '';
             }
-            if(!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
+            if (!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
                 return '';
             }
             for (var i = 0; i < timePeriodsOfDays.length; i++) {
@@ -149,18 +149,19 @@ function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
     };
     inverseTimePeriods(parsedSchedule, freeTimeSchedule);
     segmentsIntersection(freeTimeSchedule, timePeriodsOfDays);
+
     return true;
 }
 
 function convertTimePeriods(schedule, parsedSchedule, workingHours) {
     var bankGMT = getBankGMT(workingHours);
     for (var ind in schedule) {
-        if (schedule.hasOwnProperty(ind)) {
-            if (!parseOnePersonPeriods(schedule[ind], parsedSchedule[ind], bankGMT)) {
-                return false;
-            }
+        if (!schedule.hasOwnProperty(ind) ||
+            !parseOnePersonPeriods(schedule[ind], parsedSchedule[ind], bankGMT)) {
+            return false;
         }
     }
+
     return true;
 }
 
@@ -179,8 +180,7 @@ function parseOnePersonPeriods(person, parsedSchedulePerson, bankGMT) {
         var tryParseDataTo = parseDataSchedule(person[j].to, bankGMT);
         if (tryParseDataFrom.day > -1 && tryParseDataTo.day > -1) {
             addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseDataTo);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -193,6 +193,7 @@ function parseDataSchedule(item, gmtBank) {
         day: -1,
         time: 0
     };
+
     dayTime.day = DAYS_OF_WEEK.indexOf(item.substr(0, 2));
     if (dayTime.day !== -1) {
         dayTime.time = parseTime(item.substr(3, 5));
