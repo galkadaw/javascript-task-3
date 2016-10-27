@@ -50,7 +50,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {Boolean}
          */
         exists: function () {
-            if (checkParams(schedule, duration, workingHours)) {
+            if (checkBadParams(schedule, duration, workingHours)) {
                 return false;
             }
             convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours);
@@ -71,7 +71,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {String}
          */
         format: function (template) {
-            if (checkParams(schedule, duration, workingHours)) {
+            if (checkBadParams(schedule, duration, workingHours)) {
                 return '';
             }
             convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours);
@@ -99,9 +99,34 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
 
 };
 
-function checkParams(schedule, duration, workingHours) {
-    return (schedule === null || duration === undefined || workingHours === null ||
-    schedule === undefined || workingHours === undefined);
+function checkBadParams(schedule, duration, workingHours) {
+    return checkSchedule(schedule) || checkDuration(duration) || checkWorkingHours(workingHours);
+}
+
+function checkSchedule(schedule) {
+    if (schedule === null || schedule === undefined || Object.keys(schedule).length !== 3 ||
+        checkSchedulePerson(schedule)) {
+        return true;
+    }
+}
+function checkSchedulePerson(schedule) {
+    return (Object.keys(schedule).indexOf('Danny') === -1 ||
+    Object.keys(schedule).indexOf('Rusty') === -1 ||
+    Object.keys(schedule).indexOf('Linus') === -1);
+}
+
+function checkDuration(duration) {
+    if (duration === undefined || Number.isNaN(duration) || duration < 0) {
+        return true;
+    }
+}
+
+function checkWorkingHours(workingHours) {
+    if (workingHours === undefined || workingHours === null ||
+        Object.keys(workingHours).indexOf('from') === - 1 ||
+        Object.keys(workingHours).indexOf('to') === -1) {
+        return true;
+    }
 }
 
 function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
@@ -151,7 +176,7 @@ function parseOnePersonPeriods(person, parsedSchedulePerson, bankGMT) {
 function parseDataSchedule(item, gmtBank) {
     var dayTime = {
         day: -1,
-        time: new Date(2016, 0, 1)
+        time: 0
     };
     dayTime.day = DAYS_OF_WEEK.indexOf(item.substr(0, 2));
     if (dayTime.day !== -1) {
