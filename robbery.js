@@ -53,7 +53,9 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return false;
             }
-            convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours);
+            if(!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
+                return false;
+            }
             for (var i = 0; i < timePeriodsOfDays.length; i++) {
                 if (foundCorrectPeriod(timePeriodsOfDays[i], duration)) {
                     return true;
@@ -74,7 +76,9 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return '';
             }
-            convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours);
+            if(!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
+                return '';
+            }
             for (var i = 0; i < timePeriodsOfDays.length; i++) {
                 timePeriodsOfDays[i].sort(sortPeriods);
                 template = createTemplate(template, timePeriodsOfDays[i], duration, i);
@@ -135,7 +139,9 @@ function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
         Rusty: [],
         Linus: []
     };
-    convertTimePeriods(schedule, parsedSchedule, workingHours);
+    if (!convertTimePeriods(schedule, parsedSchedule, workingHours)) {
+        return false;
+    }
     var freeTimeSchedule = {
         Danny: [],
         Rusty: [],
@@ -143,15 +149,19 @@ function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
     };
     inverseTimePeriods(parsedSchedule, freeTimeSchedule);
     segmentsIntersection(freeTimeSchedule, timePeriodsOfDays);
+    return true;
 }
 
 function convertTimePeriods(schedule, parsedSchedule, workingHours) {
     var bankGMT = getBankGMT(workingHours);
     for (var ind in schedule) {
         if (schedule.hasOwnProperty(ind)) {
-            parseOnePersonPeriods(schedule[ind], parsedSchedule[ind], bankGMT);
+            if (!parseOnePersonPeriods(schedule[ind], parsedSchedule[ind], bankGMT)) {
+                return false;
+            }
         }
     }
+    return true;
 }
 
 function getBankGMT(workingHours) {
@@ -170,7 +180,12 @@ function parseOnePersonPeriods(person, parsedSchedulePerson, bankGMT) {
         if (tryParseDataFrom.day > -1 && tryParseDataTo.day > -1) {
             addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseDataTo);
         }
+        else {
+            return false;
+        }
     }
+
+    return true;
 }
 
 function parseDataSchedule(item, gmtBank) {
