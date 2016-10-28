@@ -26,7 +26,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {Boolean}
          */
         exists: function () {
-            if (checkBadParams(schedule, duration, workingHours)) {
+            if (checkBadParams(duration, workingHours)) {
                 return false;
             }
             var timePeriodsOfDays = [[], [], []];
@@ -61,7 +61,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {String}
          */
         format: function (template) {
-            if (checkBadParams(schedule, duration, workingHours)) {
+            if (checkBadParams(duration, workingHours)) {
                 return '';
             }
             var timePeriodsOfDays = [[], [], []];
@@ -101,14 +101,10 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
 
 };
 
-function checkBadParams(schedule, duration, workingHours) {
-    return (checkSchedule(schedule) || checkDuration(duration) ||
+function checkBadParams(duration, workingHours) {
+    return (checkDuration(duration) ||
     checkWorkingHours(workingHours) ||
     duration > parseTime(workingHours.to) - parseTime(workingHours.from));
-}
-
-function checkSchedule(schedule) {
-    return (schedule === null || schedule === undefined);
 }
 
 function checkDuration(duration) {
