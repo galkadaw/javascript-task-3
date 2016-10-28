@@ -18,30 +18,6 @@ var DAYS_OF_WEEK = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
  */
 exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     console.info(schedule, duration, workingHours);
-    var timePeriodsOfDays = [
-        [
-            {
-                from: parseTime(workingHours.from),
-                to: parseTime(workingHours.to),
-                countOfPeople: 0
-            }
-        ],
-        [
-            {
-                from: parseTime(workingHours.from),
-                to: parseTime(workingHours.to),
-                countOfPeople: 0
-            }
-        ],
-        [
-            {
-                from: parseTime(workingHours.from),
-                to: parseTime(workingHours.to),
-                countOfPeople: 0
-            }
-        ]
-    ];
-
 
     return {
 
@@ -53,9 +29,22 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return false;
             }
+
+            var timePeriodsOfDays = [[], [], []];
+            for (var j = 0; j < timePeriodsOfDays.length; j++) {
+                timePeriodsOfDays[j].push(
+                    {
+                        from: parseTime(workingHours.from),
+                        to: parseTime(workingHours.to),
+                        countOfPeople: 0
+                    }
+                );
+            }
+
             if (!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
                 return false;
             }
+
             for (var i = 0; i < timePeriodsOfDays.length; i++) {
                 if (foundCorrectPeriod(timePeriodsOfDays[i], duration)) {
                     return true;
@@ -75,6 +64,16 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         format: function (template) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return '';
+            }
+            var timePeriodsOfDays = [[], [], []];
+            for (var j = 0; j < timePeriodsOfDays.length; j++) {
+                timePeriodsOfDays[j].push(
+                    {
+                        from: parseTime(workingHours.from),
+                        to: parseTime(workingHours.to),
+                        countOfPeople: 0
+                    }
+                    );
             }
             if (!convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours)) {
                 return '';
@@ -129,7 +128,7 @@ function checkBankTimeStrings(workingHours) {
     for (var index in workingHours) {
         if (workingHours.hasOwnProperty(index)) {
             isNotCorrectString = isNotCorrectString ||
-                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]\d?/) === -1 ||
+                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]\d?$/) === -1 ||
                 workingHours[index].length < 7 || workingHours[index].length > 8;
         }
     }
