@@ -129,7 +129,7 @@ function checkBankTimeStrings(workingHours) {
     for (var index in workingHours) {
         if (workingHours.hasOwnProperty(index)) {
             isNotCorrectString = isNotCorrectString ||
-                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]$/) === -1 ||
+                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]\d?$/) === -1 ||
                 workingHours[index].length < 7 || workingHours[index].length > 8;
         }
     }
@@ -188,8 +188,7 @@ function parseDataSchedule(item, gmtBank) {
         day: -1,
         time: 0
     };
-    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+[1-9]$/) === -1 || item.length < 10 ||
-    item.length > 11) {
+    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+[1-9]$/) === -1 || item.length !== 10) {
         return dayTime;
     }
     dayTime.day = DAYS_OF_WEEK.indexOf(item.substr(0, 2));
