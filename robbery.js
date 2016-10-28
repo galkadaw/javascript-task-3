@@ -129,7 +129,7 @@ function checkBankTimeStrings(workingHours) {
     for (var index in workingHours) {
         if (workingHours.hasOwnProperty(index)) {
             isNotCorrectString = isNotCorrectString ||
-                workingHours[index].search(/^\d{2}:\d{2}\+\d\d?/) === -1 ||
+                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]\d?/) === -1 ||
                 workingHours[index].length < 7 || workingHours[index].length > 8;
         }
     }
@@ -158,7 +158,7 @@ function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
 }
 
 function convertTimePeriods(schedule, parsedSchedule, workingHours) {
-    var bankGMT = getBankGMT(workingHours);
+    var bankGMT = parseInt(workingHours.from.substr(6));
     for (var ind in schedule) {
         if (!schedule.hasOwnProperty(ind) ||
             !parseOnePersonPeriods(schedule[ind], parsedSchedule[ind], bankGMT)) {
@@ -167,15 +167,6 @@ function convertTimePeriods(schedule, parsedSchedule, workingHours) {
     }
 
     return true;
-}
-
-function getBankGMT(workingHours) {
-    var bankWorkGMT = 0;
-    if (workingHours.from.length > 5) {
-        bankWorkGMT = parseInt(workingHours.from.substr(6));
-    }
-
-    return bankWorkGMT;
 }
 
 function parseOnePersonPeriods(person, parsedSchedulePerson, bankGMT) {
@@ -197,7 +188,7 @@ function parseDataSchedule(item, gmtBank) {
         day: -1,
         time: 0
     };
-    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+\d\d?$/) === -1 || item.length < 10 ||
+    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+[1-9]\d?$/) === -1 || item.length < 10 ||
     item.length > 11) {
         return dayTime;
     }
