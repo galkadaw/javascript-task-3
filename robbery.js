@@ -108,29 +108,18 @@ function checkBadParams(schedule, duration, workingHours) {
 }
 
 function checkSchedule(schedule) {
-    if (schedule === null || schedule === undefined || Object.keys(schedule).length !== 3 ||
-        checkSchedulePerson(schedule)) {
-        return true;
-    }
-}
-function checkSchedulePerson(schedule) {
-    return (Object.keys(schedule).indexOf('Danny') === -1 ||
-    Object.keys(schedule).indexOf('Rusty') === -1 ||
-    Object.keys(schedule).indexOf('Linus') === -1);
+    return (schedule === null || schedule === undefined);
 }
 
 function checkDuration(duration) {
-    if (duration === undefined || Number.isNaN(duration) || duration < 0) {
-        return true;
-    }
+    return (duration === undefined || Number.isNaN(duration) || duration < 0);
 }
 
 function checkWorkingHours(workingHours) {
-    if (workingHours === undefined || workingHours === null ||
-        Object.keys(workingHours).indexOf('from') === - 1 ||
-        Object.keys(workingHours).indexOf('to') === -1) {
-        return true;
-    }
+    return (workingHours === undefined || workingHours === null ||
+        Object.keys(workingHours).indexOf('from') === -1 ||
+        Object.keys(workingHours).indexOf('to') === -1);
+
 }
 
 function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
@@ -193,7 +182,10 @@ function parseDataSchedule(item, gmtBank) {
         day: -1,
         time: 0
     };
-
+    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+\d\d?$/) === -1 || item.length < 10 ||
+    item.length > 11) {
+        return dayTime;
+    }
     dayTime.day = DAYS_OF_WEEK.indexOf(item.substr(0, 2));
     if (dayTime.day !== -1) {
         dayTime.time = parseTime(item.substr(3, 5));
