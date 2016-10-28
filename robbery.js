@@ -112,7 +112,8 @@ function checkSchedule(schedule) {
 }
 
 function checkDuration(duration) {
-    return (duration === undefined || Number.isNaN(duration) || duration < 0);
+    return (duration === undefined || Number.isNaN(duration) ||
+    duration <= 0 || duration === null);
 }
 
 function checkWorkingHours(workingHours) {
