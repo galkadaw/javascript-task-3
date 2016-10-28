@@ -29,9 +29,6 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             if (checkBadParams(schedule, duration, workingHours)) {
                 return false;
             }
-            if (duration > parseTime(workingHours.to) - parseTime(workingHours.from)){
-                return false;
-            }
             var timePeriodsOfDays = [[], [], []];
             for (var j = 0; j < timePeriodsOfDays.length; j++) {
                 timePeriodsOfDays[j].push(
@@ -65,9 +62,6 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          */
         format: function (template) {
             if (checkBadParams(schedule, duration, workingHours)) {
-                return '';
-            }
-            if (duration > parseTime(workingHours.to) - parseTime(workingHours.from)){
                 return '';
             }
             var timePeriodsOfDays = [[], [], []];
@@ -108,7 +102,9 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
 };
 
 function checkBadParams(schedule, duration, workingHours) {
-    return checkSchedule(schedule) || checkDuration(duration) || checkWorkingHours(workingHours);
+    return (checkSchedule(schedule) || checkDuration(duration) ||
+    checkWorkingHours(workingHours) ||
+    duration > parseTime(workingHours.to) - parseTime(workingHours.from));
 }
 
 function checkSchedule(schedule) {
