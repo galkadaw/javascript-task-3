@@ -245,12 +245,16 @@ function addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseData
         assignment(tryParseDataTo,
             parsedSchedulePerson[parsedSchedulePerson.length - 1].to);
     } else {
+
         assignment(tryParseDataFrom,
             parsedSchedulePerson[parsedSchedulePerson.length - 1].from);
         parsedSchedulePerson[parsedSchedulePerson.length - 1].to.day =
             tryParseDataFrom.day;
         parsedSchedulePerson[parsedSchedulePerson.length - 1].to.time =
             1439;
+        if (Math.abs(tryParseDataFrom.day - tryParseDataTo.day) > 1) {
+            addBusyDays(parsedSchedulePerson, tryParseDataFrom.day, tryParseDataTo.day);
+        }
         parsedSchedulePerson.push(
             {
                 from: {
@@ -276,6 +280,31 @@ function addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseData
 function assignment(assignFrom, assignTo) {
     assignTo.day = assignFrom.day;
     assignTo.time = assignFrom.time;
+}
+
+function addBusyDays(parsedSchedulePerson, dayFrom, dayTo) {
+    var i = 0;
+    while ((dayFrom + i) % 7 !== dayTo) {
+        parsedSchedulePerson.push(
+            {
+                from: {
+                    day: -1,
+                    time: 0
+                },
+                to: {
+                    day: -1,
+                    time: 0
+                }
+            }
+        );
+        parsedSchedulePerson[parsedSchedulePerson.length - 1].from.day =
+            (dayFrom + i) % 7;
+        parsedSchedulePerson[parsedSchedulePerson.length - 1].from.time = 0;
+        parsedSchedulePerson[parsedSchedulePerson.length - 1].to.day =
+            (dayFrom + i) % 7;
+        parsedSchedulePerson[parsedSchedulePerson.length - 1].to.time = 1439;
+        i++;
+    }
 }
 
 function inverseTimePeriods(parsedSchedule, freeTimeSchedule) {
