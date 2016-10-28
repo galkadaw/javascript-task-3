@@ -129,7 +129,7 @@ function checkBankTimeStrings(workingHours) {
     for (var index in workingHours) {
         if (workingHours.hasOwnProperty(index)) {
             isNotCorrectString = isNotCorrectString ||
-                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]\d?$/) === -1 ||
+                workingHours[index].search(/^\d{2}:\d{2}\+[1-9]$/) === -1 ||
                 workingHours[index].length < 7 || workingHours[index].length > 8;
         }
     }
@@ -188,7 +188,7 @@ function parseDataSchedule(item, gmtBank) {
         day: -1,
         time: 0
     };
-    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+[1-9]\d?$/) === -1 || item.length < 10 ||
+    if (item.search(/^[А-Я]{2}\s\d{2}:\d{2}\+[1-9]$/) === -1 || item.length < 10 ||
     item.length > 11) {
         return dayTime;
     }
@@ -252,9 +252,6 @@ function addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseData
             tryParseDataFrom.day;
         parsedSchedulePerson[parsedSchedulePerson.length - 1].to.time =
             1439;
-        if (Math.abs(tryParseDataFrom.day - tryParseDataTo.day) > 1) {
-            addBusyDays(parsedSchedulePerson, tryParseDataFrom.day, tryParseDataTo.day);
-        }
         parsedSchedulePerson.push(
             {
                 from: {
@@ -280,31 +277,6 @@ function addNewParsedPeriod(parsedSchedulePerson, tryParseDataFrom, tryParseData
 function assignment(assignFrom, assignTo) {
     assignTo.day = assignFrom.day;
     assignTo.time = assignFrom.time;
-}
-
-function addBusyDays(parsedSchedulePerson, dayFrom, dayTo) {
-    var i = 0;
-    while ((dayFrom + i) % 7 !== dayTo) {
-        parsedSchedulePerson.push(
-            {
-                from: {
-                    day: -1,
-                    time: 0
-                },
-                to: {
-                    day: -1,
-                    time: 0
-                }
-            }
-        );
-        parsedSchedulePerson[parsedSchedulePerson.length - 1].from.day =
-            (dayFrom + i) % 7;
-        parsedSchedulePerson[parsedSchedulePerson.length - 1].from.time = 0;
-        parsedSchedulePerson[parsedSchedulePerson.length - 1].to.day =
-            (dayFrom + i) % 7;
-        parsedSchedulePerson[parsedSchedulePerson.length - 1].to.time = 1439;
-        i++;
-    }
 }
 
 function inverseTimePeriods(parsedSchedule, freeTimeSchedule) {
