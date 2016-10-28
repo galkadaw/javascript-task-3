@@ -118,8 +118,22 @@ function checkDuration(duration) {
 function checkWorkingHours(workingHours) {
     return (workingHours === undefined || workingHours === null ||
         Object.keys(workingHours).indexOf('from') === -1 ||
-        Object.keys(workingHours).indexOf('to') === -1);
+        Object.keys(workingHours).indexOf('to') === -1 ||
+        checkBankTimeStrings(workingHours));
 
+}
+
+function checkBankTimeStrings(workingHours) {
+    var isNotCorrectString = false;
+    for (var index in workingHours) {
+        if (workingHours.hasOwnProperty(index)) {
+            isNotCorrectString = isNotCorrectString ||
+                workingHours[index].search(/^\d{2}:\d{2}\+\d\d?/) === -1 ||
+                workingHours[index].length < 7 || workingHours[index].length > 8;
+        }
+    }
+
+    return isNotCorrectString;
 }
 
 function convertDataToFreePeriods(schedule, timePeriodsOfDays, workingHours) {
